@@ -128,8 +128,7 @@ class ApiAuthPlugin implements EventSubscriberInterface
      */
     protected function setDateHeaderOnRequest($request)
     {
-        $date = $request->getHeader('Date');
-        if (empty($date)) {
+        if (!$date = $request->getHeader('Date')) {
             $request->setHeader('Date', http_date());
         }
     }
