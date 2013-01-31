@@ -22,6 +22,13 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         $this->apiAuthPlugin = new ApiAuthPlugin($config);
     }
 
+    protected function mockBeforeSendFor($request)
+    {
+        $event = new Event(array('request' => $request));
+        $this->apiAuthPlugin->onRequestBeforeSend($event);
+        return $event;
+    }
+
     protected function getRequest()
     {
         return RequestFactory::getInstance()->create(
@@ -64,10 +71,8 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
                 'Content-MD5' => "e59ff97941044f85df5297e1c302d260",
             )
         );
-        $event = new Event(array('request' => $request));
 
-        $this->apiAuthPlugin->onRequestBeforeSend($event);
-
+        $event = $this->mockBeforeSendFor($request);
         $this->assertNotEmpty($event['request']->getHeader('Date'));
     }
 
@@ -81,10 +86,8 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
                 'Date' => http_date()
             )
         );
-        $event = new Event(array('request' => $request));
 
-        $this->apiAuthPlugin->onRequestBeforeSend($event);
-
+        $event = $this->mockBeforeSendFor($request);
         $this->assertEquals(
             (string) $event['request']->getHeader('Content-MD5'),
             '1B2M2Y8AsgTpgAmY7PhCfg=='
@@ -102,10 +105,8 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
             ),
             "helo\nworld"
         );
-        $event = new Event(array('request' => $request));
 
-        $this->apiAuthPlugin->onRequestBeforeSend($event);
-
+        $event = $this->mockBeforeSendFor($request);
         $this->assertEquals(
             (string) $event['request']->getHeader('Content-MD5'),
             'MATnNnvfHYuh9MbanV26yg=='
@@ -115,10 +116,8 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
     public function testMD5HeaderShouldLeaveTheContentMD5AloneIfProvided()
     {
         $request = $this->getRequest();
-        $event = new Event(array('request' => $request));
 
-        $this->apiAuthPlugin->onRequestBeforeSend($event);
-
+        $event = $this->mockBeforeSendFor($request);
         $this->assertEquals(
             (string) $event['request']->getHeader('Content-MD5'),
             "1B2M2Y8AsgTpgAmY7PhCfg=="
@@ -127,20 +126,15 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGenerateTheProperCanonicalString()
     {
-
         $request = $this->getRequest();
-
         $canonicalString = $this->apiAuthPlugin->getCanonicalString($request);
-
         $this->assertEquals(self::CANONICAL_STRING, $canonicalString);
     }
 
     public function testGetHMACSignatureGeneratesAValidSignature()
     {
         $request = $this->getRequest();
-
         $signature = $this->apiAuthPlugin->getHMACSignature($request);
-
         $this->assertEquals($signature, "pJU5sKxYnd1t83MxJLRsaUBqYSg=");
     }
 
@@ -148,11 +142,9 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
     public function testShouldSignTheRequest()
     {
         $request = $this->getRequest();
-        $event = new Event(array('request' => $request));
-
         $signature = $this->apiAuthPlugin->getHMACSignature($request);
-        $this->apiAuthPlugin->onRequestBeforeSend($event);
 
+        $event = $this->mockBeforeSendFor($request);
         $this->assertEquals(
             (string) $event['request']->getHeader('Authorization'),
             "APIAuth 1044:{$signature}"
