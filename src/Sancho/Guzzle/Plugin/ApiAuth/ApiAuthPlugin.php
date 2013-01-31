@@ -86,13 +86,25 @@ class ApiAuthPlugin implements EventSubscriberInterface
      */
     protected function setMD5HeaderOnRequest($request)
     {
-        $contentMD5 = $request->getHeader('Content-MD5');
-        if (empty($contentMD5)) {
-            $body = $request instanceof EntityEnclosingRequestInterface ?
-                $request->getBody() :
-                '';
+        if (!$contentMD5 = $request->getHeader('Content-MD5')) {
+            $body = $this->getRequestBody($request);
             $request->setHeader('Content-MD5', $this->calculateMD5($body));
         }
+    }
+
+    /**
+     * Returns the request's body.
+     *
+     * Returns empty string if request is not a entity enclosing inteface.
+     *
+     * @param RequestInterface $request Request to get body from.
+     *
+     * @return string
+     */
+    protected function getRequestBody($request)
+    {
+        return $request instanceof EntityEnclosingRequestInterface ?
+            (string) $request->getBody() : '';
     }
 
     /**
