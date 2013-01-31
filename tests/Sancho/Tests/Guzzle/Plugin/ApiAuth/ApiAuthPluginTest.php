@@ -8,7 +8,6 @@ use Sancho\Guzzle\Plugin\ApiAuth\ApiAuthPlugin;
 
 class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 {
-    const TIMESTAMP = '1327274290';
     const CANONICAL_STRING = "text/plain,1B2M2Y8AsgTpgAmY7PhCfg==,/resource.xml?foo=bar&bar=foo,Mon, 23 Jan 1984 03:29:56 GMT";
 
     protected $config = array(
@@ -60,10 +59,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
                 'Content-MD5' => "e59ff97941044f85df5297e1c302d260",
             )
         );
-        $event = new Event(array(
-            'request' => $request,
-            'timestamp' => self::TIMESTAMP
-        ));
+        $event = new Event(array('request' => $request));
 
         $p = new ApiAuthPlugin($this->config);
         $p->onRequestBeforeSend($event);
@@ -81,10 +77,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
                 'Date' => http_date()
             )
         );
-        $event = new Event(array(
-            'request' => $request,
-            'timestamp' => self::TIMESTAMP
-        ));
+        $event = new Event(array('request' => $request));
 
         $p = new ApiAuthPlugin($this->config);
         $p->onRequestBeforeSend($event);
@@ -106,10 +99,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
             ),
             "helo\nworld"
         );
-        $event = new Event(array(
-            'request' => $request,
-            'timestamp' => self::TIMESTAMP
-        ));
+        $event = new Event(array('request' => $request));
 
         $p = new ApiAuthPlugin($this->config);
         $p->onRequestBeforeSend($event);
@@ -123,10 +113,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
     public function testMD5HeaderShouldLeaveTheContentMD5AloneIfProvided()
     {
         $request = $this->getRequest();
-        $event = new Event(array(
-            'request' => $request,
-            'timestamp' => self::TIMESTAMP
-        ));
+        $event = new Event(array('request' => $request));
 
         $p = new ApiAuthPlugin($this->config);
         $p->onRequestBeforeSend($event);
@@ -162,10 +149,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
     public function testShouldSignTheRequest()
     {
         $request = $this->getRequest();
-        $event = new Event(array(
-            'request' => $request,
-            'timestamp' => self::TIMESTAMP
-        ));
+        $event = new Event(array('request' => $request));
 
         $p = new ApiAuthPlugin($this->config);
         $signature = $p->getHMACSignature($request);
