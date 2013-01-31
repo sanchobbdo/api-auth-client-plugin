@@ -33,7 +33,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
     {
         return RequestFactory::getInstance()->create(
             'PUT',
-            '/resource.xml?foo=bar&bar=foo',
+            'http://test.co/resource.xml?foo=bar&bar=foo',
             array(
                 'Content-type' => "text/plain",
                 'Content-MD5' => "1B2M2Y8AsgTpgAmY7PhCfg==",
