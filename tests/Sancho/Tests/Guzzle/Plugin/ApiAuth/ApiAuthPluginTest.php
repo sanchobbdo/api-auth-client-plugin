@@ -12,10 +12,15 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
     const ACCESS_ID = '1044';
     const SECRET_KEY = 'ybqnM8UFztOwDfLOnsLlpUi+weSLvhiA5AigjUmRcWZ9dRSj1cnGWlnGKSAI\n+VT2VcdmQ3F61lfumx133MWcHw==';
 
-    protected $config = array(
-        'accessId' => self::ACCESS_ID,
-        'secretKey' => self::SECRET_KEY
-    );
+    public function setUp()
+    {
+        $config = array(
+            'accessId' => self::ACCESS_ID,
+            'secretKey' => self::SECRET_KEY
+        );
+
+        $this->apiAuthPlugin = new ApiAuthPlugin($config);
+    }
 
     protected function getRequest()
     {
@@ -38,16 +43,14 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 
     public function testAcceptsConfigurationData()
     {
-        $p = new ApiAuthPlugin($this->config);
-
         // Access the config object
-        $class = new \ReflectionClass($p);
+        $class = new \ReflectionClass($this->apiAuthPlugin);
         $property = $class->getProperty('config');
         $property->setAccessible(true);
-        $config = $property->getValue($p);
+        $config = $property->getValue($this->apiAuthPlugin);
 
-        $this->assertEquals($this->config['accessId'], $config['accessId']);
-        $this->assertEquals($this->config['secretKey'], $config['secretKey']);
+        $this->assertEquals(self::ACCESS_ID, $config['accessId']);
+        $this->assertEquals(self::SECRET_KEY, $config['secretKey']);
     }
 
 
@@ -63,8 +66,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         );
         $event = new Event(array('request' => $request));
 
-        $p = new ApiAuthPlugin($this->config);
-        $p->onRequestBeforeSend($event);
+        $this->apiAuthPlugin->onRequestBeforeSend($event);
 
         $this->assertNotEmpty($event['request']->getHeader('Date'));
     }
@@ -81,8 +83,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         );
         $event = new Event(array('request' => $request));
 
-        $p = new ApiAuthPlugin($this->config);
-        $p->onRequestBeforeSend($event);
+        $this->apiAuthPlugin->onRequestBeforeSend($event);
 
         $this->assertEquals(
             (string) $event['request']->getHeader('Content-MD5'),
@@ -103,8 +104,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         );
         $event = new Event(array('request' => $request));
 
-        $p = new ApiAuthPlugin($this->config);
-        $p->onRequestBeforeSend($event);
+        $this->apiAuthPlugin->onRequestBeforeSend($event);
 
         $this->assertEquals(
             (string) $event['request']->getHeader('Content-MD5'),
@@ -117,8 +117,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         $request = $this->getRequest();
         $event = new Event(array('request' => $request));
 
-        $p = new ApiAuthPlugin($this->config);
-        $p->onRequestBeforeSend($event);
+        $this->apiAuthPlugin->onRequestBeforeSend($event);
 
         $this->assertEquals(
             (string) $event['request']->getHeader('Content-MD5'),
@@ -131,8 +130,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 
         $request = $this->getRequest();
 
-        $p = new ApiAuthPlugin($this->config);
-        $canonicalString = $p->getCanonicalString($request);
+        $canonicalString = $this->apiAuthPlugin->getCanonicalString($request);
 
         $this->assertEquals(self::CANONICAL_STRING, $canonicalString);
     }
@@ -141,8 +139,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
     {
         $request = $this->getRequest();
 
-        $p = new ApiAuthPlugin($this->config);
-        $signature = $p->getHMACSignature($request);
+        $signature = $this->apiAuthPlugin->getHMACSignature($request);
 
         $this->assertEquals($signature, "pJU5sKxYnd1t83MxJLRsaUBqYSg=");
     }
@@ -153,9 +150,8 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         $request = $this->getRequest();
         $event = new Event(array('request' => $request));
 
-        $p = new ApiAuthPlugin($this->config);
-        $signature = $p->getHMACSignature($request);
-        $p->onRequestBeforeSend($event);
+        $signature = $this->apiAuthPlugin->getHMACSignature($request);
+        $this->apiAuthPlugin->onRequestBeforeSend($event);
 
         $this->assertEquals(
             (string) $event['request']->getHeader('Authorization'),
