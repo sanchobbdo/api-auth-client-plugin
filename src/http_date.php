@@ -5,8 +5,8 @@
  *
  * PHP version 5
  *
- * @category Helper
- * @package  Pith
+ * @category Helpers
+ * @package  ApiAuthPlugin
  * @author   Camilo Aguilar <camiloaguilar@sanchobbdo.com.co>
  * @license  MIT http://opensource.org/licenses/MIT
  * @link     http://
