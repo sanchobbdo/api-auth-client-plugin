@@ -66,7 +66,7 @@ class ApiAuthPlugin implements EventSubscriberInterface
      *
      * @param Event $event Event recieved.
      *
-     * @return array
+     * @return null
      */
     public function onRequestBeforeSend(Event $event)
     {
@@ -75,8 +75,6 @@ class ApiAuthPlugin implements EventSubscriberInterface
         $this->setMD5HeaderOnRequest($request);
         $this->setDateHeaderOnRequest($request);
         $this->setAuthorizationHeaderOnRequest($request);
-
-        return array();
     }
 
     /**
