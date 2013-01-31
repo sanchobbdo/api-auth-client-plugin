@@ -52,3 +52,8 @@ $client->addSubscriber($apiAuthPlugin);
 
 // Enjoy!
 ```
+
+License
+-------
+
+Licensed under the [MIT License](http://opensource.org/licenses/MIT).
