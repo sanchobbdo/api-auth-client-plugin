@@ -142,12 +142,14 @@ class ApiAuthPlugin implements EventSubscriberInterface
      */
     public function getCanonicalString($request)
     {
-        return join(',', array(
+        $parts = array(
             $request->getHeader('content-type'),
             $request->getHeader('content-md5'),
-            $request->getPath() . $request->getQuery(),
+            $request->getPath().$request->getQuery(),
             $request->getHeader('date')
-        ));
+        );
+
+        return join(',', $parts);
     }
 
     /**
