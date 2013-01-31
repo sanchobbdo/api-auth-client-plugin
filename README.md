@@ -15,7 +15,7 @@ Usage
 <?php
 
 // Include composer's autoload.
-require '../vendor/autoload.php';
+require 'vendor/autoload.php';
 
 // Use required Guzzle classess.
 use Guzzle\Http\Client;
