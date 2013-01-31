@@ -12,8 +12,8 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
     const CANONICAL_STRING = "text/plain,1B2M2Y8AsgTpgAmY7PhCfg==,/resource.xml?foo=bar&bar=foo,Mon, 23 Jan 1984 03:29:56 GMT";
 
     protected $config = array(
-        'access_id' => '1044',
-        'secret_key' => 'ybqnM8UFztOwDfLOnsLlpUi+weSLvhiA5AigjUmRcWZ9dRSj1cnGWlnGKSAI\n+VT2VcdmQ3F61lfumx133MWcHw=='
+        'accessId' => '1044',
+        'secretKey' => 'ybqnM8UFztOwDfLOnsLlpUi+weSLvhiA5AigjUmRcWZ9dRSj1cnGWlnGKSAI\n+VT2VcdmQ3F61lfumx133MWcHw=='
     );
 
     protected function getRequest()
@@ -45,8 +45,8 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         $property->setAccessible(true);
         $config = $property->getValue($p);
 
-        $this->assertEquals($this->config['access_id'], $config['access_id']);
-        $this->assertEquals($this->config['secret_key'], $config['secret_key']);
+        $this->assertEquals($this->config['accessId'], $config['accessId']);
+        $this->assertEquals($this->config['secretKey'], $config['secretKey']);
     }
 
 

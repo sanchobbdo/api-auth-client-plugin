@@ -41,16 +41,16 @@ class ApiAuthPlugin implements EventSubscriberInterface
      * Create a new Api Auth plugin.
      *
      * @param array $config Configuration array containing these parameters:
-     *     - string 'access_id'      Access ID
-     *     - string 'secret_key'     Secret Key
+     *     - string 'accessId'      Access ID
+     *     - string 'secretKey'     Secret Key
      */
     public function __construct($config)
     {
         $this->config = Collection::fromConfig($config, array(
-            'access_id' => '',
-            'secret_key' => ''
+            'accessId' => '',
+            'secretKey' => ''
         ), array(
-            'access_id', 'secret_key'
+            'accessId', 'secretKey'
         ));
     }
 
@@ -154,7 +154,7 @@ class ApiAuthPlugin implements EventSubscriberInterface
     public function getHMACSignature($request)
     {
         $canonicalString = $this->getCanonicalString($request);
-        $s = hash_hmac('sha1', $canonicalString, $this->config['secret_key'], true);
+        $s = hash_hmac('sha1', $canonicalString, $this->config['secretKey'], true);
         $s = base64_encode($s);
         $s = trim($s);
         return $s;
@@ -170,7 +170,7 @@ class ApiAuthPlugin implements EventSubscriberInterface
     public function setAuthorizationHeaderOnRequest($request)
     {
         $signature = $this->getHMACSignature($request);
-        $authorized_header = "APIAuth {$this->config['access_id']}:{$signature}";
+        $authorized_header = "APIAuth {$this->config['accessId']}:{$signature}";
         $request->setHeader('Authorization', $authorized_header);
     }
 }
