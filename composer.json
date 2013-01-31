@@ -19,6 +19,7 @@
         "psr-0": {
             "Sancho\\Tests\\Guzzle": "tests/",
             "Sancho\\Guzzle": "src/"
-        }
+        },
+        "files": ["src/http_date.php"]
     }
 }
