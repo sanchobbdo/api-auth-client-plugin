@@ -13,7 +13,7 @@
  * @filesource
  */
 
-namespace Sancho\Guzzle\Plugin\ApiAuth;
+namespace SanchoBBDO\Guzzle\Plugin\ApiAuth;
 
 use Guzzle\Common\Collection;
 use Guzzle\Common\Event;

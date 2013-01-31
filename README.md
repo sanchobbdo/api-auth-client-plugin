@@ -21,7 +21,7 @@ require 'vendor/autoload.php';
 use Guzzle\Http\Client;
 
 // Use the api_auth plugin.
-use Sancho\Guzzle\Plugin\ApiAuth\ApiAuthPlugin;
+use SanchoBBDO\Guzzle\Plugin\ApiAuth\ApiAuthPlugin;
 
 // Set up the Guzzle Client.
 $client = new Client('http://your-host.com');

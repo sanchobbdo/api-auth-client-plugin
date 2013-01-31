@@ -1,10 +1,10 @@
 <?php
 
-namespace Sancho\Tests\Guzzle\Plugin\ApiAuth;
+namespace SanchoBBDO\Tests\Guzzle\Plugin\ApiAuth;
 
 use Guzzle\Http\Message\RequestFactory;
 use Guzzle\Common\Event;
-use Sancho\Guzzle\Plugin\ApiAuth\ApiAuthPlugin;
+use SanchoBBDO\Guzzle\Plugin\ApiAuth\ApiAuthPlugin;
 
 class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 {

@@ -10,8 +10,8 @@
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader">
 
     <testsuites>
-        <testsuite name="Sancho">
-            <directory>./tests/Sancho/Tests</directory>
+        <testsuite name="SanchoBBDO">
+            <directory>./tests/SanchoBBDO/Tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>
