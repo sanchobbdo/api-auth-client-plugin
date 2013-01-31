@@ -6,7 +6,22 @@ Guzzle Api Auth client plugin
 Installing
 ----------
 
-TODO
+Create a composer.json file in the project root:
+
+```json
+{
+  "require": {
+    "sanchobbdo/api-auth-client-plugin": "dev-master",
+    "guzzle/guzzle": "~3.1"
+  }
+}
+```
+
+Then download composer.phar and run the install command:
+
+```bash
+curl -s http://getcomposer.org/installer | php && ./composer.phar install
+```
 
 Usage
 -----
