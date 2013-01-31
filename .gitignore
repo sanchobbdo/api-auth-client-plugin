@@ -1,0 +1,7 @@
+# Composer generated files
+/vendor/
+composer.phar
+composer.lock
+
+# Build generated files
+/phpunit.xml

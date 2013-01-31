@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Phing" default="test">
+
+    <property file="phing/build.properties" override="true" />
+
+    <property name="dir.imports" value="${project.basedir}/phing/imports" />
+
+    <import file="${dir.imports}/dependencies.xml" />
+
+    <target name="test" description="Run unit tests." depends="test-init">
+        <trycatch>
+          <try>
+              <exec passthru="true" command="vendor/bin/phpunit" checkReturn="true" />
+          </try>
+        </trycatch>
+    </target>
+
+    <target name="test-init" depends="install-dependencies" description="Initialize test dependencies.">
+        <copy file="phpunit.xml.dist" tofile="phpunit.xml" />
+    </target>
+</project>

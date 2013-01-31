@@ -1,0 +1,24 @@
+{
+    "name": "sancho/api-auth-client",
+    "description": "Guzzle authentication plugin for Ruby's api_auth gem.",
+    "type": "library",
+    "keywords": ["guzzle", "authentication", "api_auth", "ruby"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Camilo Aguilar",
+            "email": "camiloaguilar@sanchobbdo.com.co",
+            "role": "Developer"
+        }
+    ],
+    "require-dev": {
+        "guzzle/guzzle": "~3.1",
+        "phpunit/phpunit": "3.7.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Sancho\\Tests\\Guzzle": "tests/",
+            "Sancho\\Guzzle": "src/"
+        }
+    }
+}
