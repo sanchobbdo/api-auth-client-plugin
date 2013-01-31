@@ -46,12 +46,9 @@ class ApiAuthPlugin implements EventSubscriberInterface
      */
     public function __construct($config)
     {
-        $this->config = Collection::fromConfig($config, array(
-            'accessId' => '',
-            'secretKey' => ''
-        ), array(
-            'accessId', 'secretKey'
-        ));
+        $defaults = array('accessId' => '', 'secretKey' => '');
+        $required = array('accessId', 'secretKey');
+        $this->config = Collection::fromConfig($config, $defaults, $required);
     }
 
     /**
