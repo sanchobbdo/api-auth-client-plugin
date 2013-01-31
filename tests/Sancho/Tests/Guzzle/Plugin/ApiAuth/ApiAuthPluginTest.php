@@ -8,11 +8,13 @@ use Sancho\Guzzle\Plugin\ApiAuth\ApiAuthPlugin;
 
 class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 {
-    const CANONICAL_STRING = "text/plain,1B2M2Y8AsgTpgAmY7PhCfg==,/resource.xml?foo=bar&bar=foo,Mon, 23 Jan 1984 03:29:56 GMT";
+    const CANONICAL_STRING = 'text/plain,1B2M2Y8AsgTpgAmY7PhCfg==,/resource.xml?foo=bar&bar=foo,Mon, 23 Jan 1984 03:29:56 GMT';
+    const ACCESS_ID = '1044';
+    const SECRET_KEY = 'ybqnM8UFztOwDfLOnsLlpUi+weSLvhiA5AigjUmRcWZ9dRSj1cnGWlnGKSAI\n+VT2VcdmQ3F61lfumx133MWcHw==';
 
     protected $config = array(
-        'accessId' => '1044',
-        'secretKey' => 'ybqnM8UFztOwDfLOnsLlpUi+weSLvhiA5AigjUmRcWZ9dRSj1cnGWlnGKSAI\n+VT2VcdmQ3F61lfumx133MWcHw=='
+        'accessId' => self::ACCESS_ID,
+        'secretKey' => self::SECRET_KEY
     );
 
     protected function getRequest()
