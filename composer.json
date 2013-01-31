@@ -2,7 +2,7 @@
     "name": "sancho/api-auth-client",
     "description": "Guzzle authentication plugin for Ruby's api_auth gem.",
     "type": "library",
-    "keywords": ["guzzle", "authentication", "api_auth", "ruby"],
+    "keywords": ["guzzle", "authentication", "api_auth", "ruby", "rest"],
     "license": "MIT",
     "authors": [
         {
