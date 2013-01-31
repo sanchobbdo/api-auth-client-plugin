@@ -116,7 +116,7 @@ class ApiAuthPlugin implements EventSubscriberInterface
      */
     protected function calculateMD5($body)
     {
-        return base64_encode(md5((string)$body, true));
+        return base64_encode(md5($body, true));
     }
 
     /**
