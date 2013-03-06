@@ -11,8 +11,8 @@ Create a composer.json file in the project root:
 ```json
 {
     "require": {
-      "sanchobbdo/api-auth-client-plugin": "~1.0.0",
-      "guzzle/guzzle": "~3.1"
+        "sanchobbdo/api-auth-client-plugin": "~1.0.0",
+        "guzzle/guzzle": "~3.1"
     }
 }
 ```
