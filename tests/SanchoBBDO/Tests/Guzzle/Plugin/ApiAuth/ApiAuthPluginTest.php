@@ -2,13 +2,17 @@
 
 namespace SanchoBBDO\Tests\Guzzle\Plugin\ApiAuth;
 
-use Guzzle\Http\Message\RequestFactory;
-use Guzzle\Common\Event;
-use SanchoBBDO\Guzzle\Plugin\ApiAuth\ApiAuthPlugin;
+use \GuzzleHttp\Client;
+use \GuzzleHttp\Event\BeforeEvent;
+use \GuzzleHttp\Message\Request;
+use \GuzzleHttp\Stream\Stream;
+use \GuzzleHttp\Transaction;
+use \SanchoBBDO\GuzzleHttp\Plugin\ApiAuth\ApiAuthPlugin;
 
 class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 {
     const CANONICAL_STRING = 'text/plain,1B2M2Y8AsgTpgAmY7PhCfg==,/resource.xml?foo=bar&bar=foo,Mon, 23 Jan 1984 03:29:56 GMT';
+    const OTHER_CANONICAL_STRING = 'text/plain,1B2M2Y8AsgTpgAmY7PhCfg==,/resource.xml,Mon, 23 Jan 1984 03:29:56 GMT';
     const ACCESS_ID = '1044';
     const SECRET_KEY = 'ybqnM8UFztOwDfLOnsLlpUi+weSLvhiA5AigjUmRcWZ9dRSj1cnGWlnGKSAI\n+VT2VcdmQ3F61lfumx133MWcHw==';
 
@@ -24,14 +28,15 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 
     protected function mockBeforeSendFor($request)
     {
-        $event = new Event(array('request' => $request));
-        $this->apiAuthPlugin->onRequestBeforeSend($event);
+        $t = new Transaction(new Client(), $request);
+        $event = new BeforeEvent($t);
+        $this->apiAuthPlugin->onBefore($event);
         return $event;
     }
 
     protected function getRequest()
     {
-        return RequestFactory::getInstance()->create(
+        return new Request(
             'PUT',
             'http://test.co/resource.xml?foo=bar&bar=foo',
             array(
@@ -42,10 +47,23 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    protected function getOtherRequest()
+    {
+        return new Request(
+            'PUT',
+            'http://test.co/resource.xml',
+            array(
+                'Content-type' => "text/plain",
+                'Content-MD5' => "1B2M2Y8AsgTpgAmY7PhCfg==",
+                'Date' => "Mon, 23 Jan 1984 03:29:56 GMT"
+            )
+        );
+    }
+
     public function testSubscribesToEvents()
     {
-        $events = ApiAuthPlugin::getSubscribedEvents();
-        $this->assertArrayHasKey('request.before_send', $events);
+        $events = $this->apiAuthPlugin->getEvents();
+        $this->assertArrayHasKey('before', $events);
     }
 
     public function testAcceptsConfigurationData()
@@ -63,7 +81,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSetTheDateHeaderIfOneIsNotAlreadyPresent()
     {
-        $request = RequestFactory::getInstance()->create(
+        $request = new Request(
             'PUT',
             'http://test.co/resource.xml?foo=bar&bar=foo',
             array(
@@ -73,12 +91,12 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         );
 
         $event = $this->mockBeforeSendFor($request);
-        $this->assertNotEmpty($event['request']->getHeader('Date'));
+        $this->assertNotEmpty($event->getRequest()->getHeader('Date'));
     }
 
     public function testMD5HeaderNotAlreadyProvidedShouldCalculateForEmptyString()
     {
-        $request = RequestFactory::getInstance()->create(
+        $request = new Request(
             'PUT',
             'http://test.co/resource.xml?foo=bar&bar=foo',
             array(
@@ -89,27 +107,27 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->mockBeforeSendFor($request);
         $this->assertEquals(
-            (string) $event['request']->getHeader('Content-MD5'),
+            (string) $event->getRequest()->getHeader('Content-MD5'),
             '1B2M2Y8AsgTpgAmY7PhCfg=='
         );
     }
 
     public function testMD5HeaderShouldCalculateForRealContent()
     {
-        $request = RequestFactory::getInstance()->create(
+        $request = new Request(
             'PUT',
             'http://test.co/resource.xml?foo=bar&bar=foo',
             array(
                 'Content-type' => "text/plain",
                 'Date' => http_date()
             ),
-            "helo\nworld"
+            Stream::factory("hello\nworld")
         );
 
         $event = $this->mockBeforeSendFor($request);
         $this->assertEquals(
-            (string) $event['request']->getHeader('Content-MD5'),
-            'MATnNnvfHYuh9MbanV26yg=='
+            (string) $event->getRequest()->getHeader('Content-MD5'),
+            'kZXQvrKoieG+Be1rsZVINw=='
         );
     }
 
@@ -119,7 +137,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->mockBeforeSendFor($request);
         $this->assertEquals(
-            (string) $event['request']->getHeader('Content-MD5'),
+            (string) $event->getRequest()->getHeader('Content-MD5'),
             "1B2M2Y8AsgTpgAmY7PhCfg=="
         );
     }
@@ -129,6 +147,13 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
         $request = $this->getRequest();
         $canonicalString = $this->apiAuthPlugin->getCanonicalString($request);
         $this->assertEquals(self::CANONICAL_STRING, $canonicalString);
+    }
+
+    public function testShouldGenerateTheProperCanonicalString2()
+    {
+        $request = $this->getOtherRequest();
+        $canonicalString = $this->apiAuthPlugin->getCanonicalString($request);
+        $this->assertEquals(self::OTHER_CANONICAL_STRING, $canonicalString);
     }
 
     public function testGetHMACSignatureGeneratesAValidSignature()
@@ -146,7 +171,7 @@ class ApiAuthPluginTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->mockBeforeSendFor($request);
         $this->assertEquals(
-            (string) $event['request']->getHeader('Authorization'),
+            (string) $event->getRequest()->getHeader('Authorization'),
             "APIAuth 1044:{$signature}"
         );
     }

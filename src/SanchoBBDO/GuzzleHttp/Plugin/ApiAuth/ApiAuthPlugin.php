@@ -13,13 +13,15 @@
  * @filesource
  */
 
-namespace SanchoBBDO\Guzzle\Plugin\ApiAuth;
+namespace SanchoBBDO\GuzzleHttp\Plugin\ApiAuth;
 
-use Guzzle\Common\Collection;
-use Guzzle\Common\Event;
-use Guzzle\Http\Message\RequestInteface;
-use Guzzle\Http\Message\EntityEnclosingRequestInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use \GuzzleHttp\Collection;
+use \GuzzleHttp\Event\BeforeEvent;
+use \GuzzleHttp\Event\RequestEvents;
+use \GuzzleHttp\Event\SubscriberInterface;
+use \GuzzleHttp\Message\RequestInteface;
+use \GuzzleHttp\Stream\StreamInterface;
+
 
 /**
  * Api Auth signing plugin.
@@ -30,7 +32,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * @license  MIT http://opensource.org/licenses/MIT
  * @link     http://
  */
-class ApiAuthPlugin implements EventSubscriberInterface
+class ApiAuthPlugin implements SubscriberInterface
 {
     /**
      * @var Collection Configuration settings.
@@ -54,23 +56,23 @@ class ApiAuthPlugin implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public function getEvents()
     {
         return array(
-            'request.before_send' => array('onRequestBeforeSend', -1000)
+            'before' => array('onBefore', \GuzzleHttp\Event\RequestEvents::SIGN_REQUEST)
         );
     }
 
     /**
-     * Request before-send handler.
+     * Request before handler.
      *
-     * @param Event $event Event recieved.
+     * @param Event $event Event received.
      *
      * @return null
      */
-    public function onRequestBeforeSend(Event $event)
+    public function onBefore(BeforeEvent $event)
     {
-        $request = $event['request'];
+        $request = $event->getRequest();
 
         $this->setMD5HeaderOnRequest($request);
         $this->setDateHeaderOnRequest($request);
@@ -95,16 +97,13 @@ class ApiAuthPlugin implements EventSubscriberInterface
     /**
      * Returns the request's body.
      *
-     * Returns empty string if request is not a entity enclosing inteface.
-     *
      * @param RequestInterface $request Request to get body from.
      *
      * @return string
      */
     protected function getRequestBody($request)
     {
-        return $request instanceof EntityEnclosingRequestInterface ?
-            (string) $request->getBody() : '';
+        return (string) $request->getBody();
     }
 
     /**
@@ -145,7 +144,7 @@ class ApiAuthPlugin implements EventSubscriberInterface
         $parts = array(
             $request->getHeader('content-type'),
             $request->getHeader('content-md5'),
-            $request->getPath().$request->getQuery(),
+            $request->getResource(),
             $request->getHeader('date')
         );
 
