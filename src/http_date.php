@@ -23,6 +23,6 @@ if (!function_exists('http_date')) {
     function http_date($timestamp = null)
     {
         $timestamp = empty($timestamp) ? time() : $timestamp;
-        return gmdate("D, d M Y H:i:s e", $timestamp);
+        return gmdate("D, d M Y H:i:s", $timestamp)."GMT";
     }
 }
