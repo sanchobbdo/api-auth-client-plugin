@@ -12,7 +12,7 @@ Create a composer.json file in the project root:
 {
     "require": {
         "sanchobbdo/api-auth-client-plugin": "~1.0.0",
-        "guzzle/guzzle": "~3.1"
+        "guzzle/guzzle": "~5.3"
     }
 }
 ```
@@ -33,12 +33,12 @@ Usage
 require 'vendor/autoload.php';
 
 // Use required Guzzle classess.
-use Guzzle\Http\Client;
+use GuzzleHttp\Client;
 
 // Use the api_auth plugin.
-use SanchoBBDO\Guzzle\Plugin\ApiAuth\ApiAuthPlugin;
+use SanchoBBDO\GuzzleHttp\Plugin\ApiAuth\ApiAuthPlugin;
 
-// Set up the Guzzle Client.
+// Set up the GuzzleHttp Client.
 $client = new Client('http://your-host.com');
 
 // Set up the api_auth plugin. Include your access id and secret key.
@@ -48,7 +48,8 @@ $apiAuthPlugin = new ApiAuthPlugin(array(
 ));
 
 // Subscribe the plugin to client's events.
-$client->addSubscriber($apiAuthPlugin);
+$emitter = $client->getEmmiter();
+$emitter->attach($apiAuthPlugin);
 
 // Enjoy!
 ```
