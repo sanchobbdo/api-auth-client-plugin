@@ -10,7 +10,5 @@ if (!file_exists(dirname(__DIR__) . '/composer.lock')) {
         . "See http://getcomposer.org for help with installing composer\n");
 }
 
-require_once 'PHPUnit/TextUI/TestRunner.php';
-
 // Include the composer autoloader
 $autoloader = require dirname(__DIR__) . '/vendor/autoload.php';
